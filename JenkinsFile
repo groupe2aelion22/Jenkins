@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+    tools {
+        // Install the Maven version configured as "M3" and add it to the path.
+        git "Default"
+        dotnetsdk "dotnet5"
+    }
+    stages {
+        stage('CLEAN GIT DIR') {
+            steps {
+                sh "rm -Rf /var/lib/jenkins/workspace/git_clone/moviecoreapi/"
+            }
+        }
+        stage('GIT CLONE') {
+            steps {
+                sh "git clone https://github.com/matthcol/moviecoreapi.git"
+            }
+        }
+        stage('RESTORE AND BUILD') {
+            steps {
+				sh "dotnet restore /var/lib/jenkins/workspace/git_clone/moviecoreapi/MovieApiRest/MovieApiRest.csproj"
+                sh "dotnet msbuild /var/lib/jenkins/workspace/git_clone/moviecoreapi/MovieApiRest/MovieApiRest.csproj"
+            }
+        }
+    }
+}
